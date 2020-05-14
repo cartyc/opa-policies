@@ -1,0 +1,34 @@
+  
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdenyimagetags
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDenyImageTags
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            tags:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package latesttag
+
+        violation[{"msg":msg}] {
+            container := input.review.object.spec.containers[_]
+            tag :=  split(container.image, ":")[1]
+
+            tag == "latest"
+
+            msg := sprintf("container <%v> uses '%v' tag", [container.name, tag])
+        }
+
+
+
