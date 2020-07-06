@@ -23,11 +23,10 @@ spec:
 
         violation[{"msg":msg}] {
             container := input.review.object.spec.containers[_]
-            tag :=  split(container.image, ":")[1]
 
-            not tag != "latest"
-
-            msg := sprintf("container <%v> uses '%v' tag", [container.name, tag])
+            satisfied := [good | tags = input.parameters.tags[_] ; good = endswith(container.image, tags)]
+            any(satisfied)
+            msg := sprintf("container <%v> uses '%v' tag. Disallowed tags '%v'", [container.name, container.image, input.parameters.tags])
         }
 
 

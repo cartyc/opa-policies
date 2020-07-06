@@ -7,6 +7,6 @@ spec:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
-    parameters:
-      tags:
-        - "latest"
+  parameters:
+    tags:
+      - "latest"
